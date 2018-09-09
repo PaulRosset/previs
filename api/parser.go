@@ -7,15 +7,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
-	language      string   `yaml:"language"`
-	versions      []string `yaml:"versions"`
-	beforeInstall []string `yaml:"before_install"`
-	install       []string `yaml:"install"`
-	beforeScript  []string `yaml:"before_script"`
-	script        []string `yaml:"script"`
-}
-
 func openConfigTravis() ([]byte, error) {
 	cwd, errOnPath := os.Getwd()
 	if errOnPath != nil {
@@ -39,15 +30,16 @@ func openConfigTravis() ([]byte, error) {
 	return data, nil
 }
 
-func getConfigFromTravis() error {
+// GetConfigFromTravis Get the config inside the travis file and transform it in a format that can be readble
+func GetConfigFromTravis() (map[string]interface{}, error) {
 	config, errOnLoad := openConfigTravis()
 	if errOnLoad != nil {
-		return errOnLoad
+		return nil, errOnLoad
 	}
-	confStructured := Config{}
+	confStructured := make(map[string]interface{})
 	errOnYml := yaml.Unmarshal(config, &confStructured)
 	if errOnYml != nil {
-		return errOnYml
+		return nil, errOnYml
 	}
-	return nil
+	return confStructured, nil
 }
