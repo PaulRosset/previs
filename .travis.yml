@@ -3,9 +3,10 @@ node_js:
   - 8
   - 9
 before_script:
-  - npm install
+  - npm script
 before_install:
   - npm task
+  - npm polo
 install:
   - npm install
 script:

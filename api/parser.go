@@ -30,7 +30,7 @@ func openConfigTravis() ([]byte, error) {
 	return data, nil
 }
 
-// GetConfigFromTravis Get the config inside the travis file and transform it in a format that can be readble
+// GetConfigFromTravis Get the config inside the travis file and transform it in a format that can be readable
 func GetConfigFromTravis() (map[string]interface{}, error) {
 	config, errOnLoad := openConfigTravis()
 	if errOnLoad != nil {

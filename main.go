@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	api "./api"
 )
 
@@ -9,6 +12,10 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-	api.Writter()
-	//fmt.Printf("%+v", config)
+	imgDocker, err := api.Writter()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error encountered: %+v", err)
+		os.Exit(1)
+	}
+	fmt.Println(imgDocker)
 }
