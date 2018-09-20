@@ -1,11 +1,18 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	api "./api"
 )
 
 func main() {
-	api.Start()
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("%+v", err)
+	}
+	api.Start("Dockerfile", cwd+"/")
 	//api.IsDockerInstall()
 	// imgDocker, err := api.Writter()
 	// if err != nil {
