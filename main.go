@@ -5,7 +5,8 @@ import (
 )
 
 func main() {
-	api.IsDockerInstall()
+	api.Start()
+	//api.IsDockerInstall()
 	// imgDocker, err := api.Writter()
 	// if err != nil {
 	// 	fmt.Fprintf(os.Stderr, "error encountered: %+v", err)

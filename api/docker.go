@@ -1,43 +1,31 @@
 package api
 
 import (
+	"context"
 	"fmt"
-	"os"
-	"os/exec"
+
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 )
 
-// IsDockerInstall check for the presence of docker on the current machine
-func IsDockerInstall() {
-	cmd := exec.Command("php", "-v")
-	err := cmd.Run()
+func startProcess(cli *client.Client) {
+	//List all images available locally
+	images, err := cli.ImageList(context.Background(), types.ImageListOptions{})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Docker is not installed on your computer.\n%+v", err)
-		os.Exit(1)
+		panic(err)
+	}
+
+	fmt.Println("LIST IMAGES\n-----------------------")
+	fmt.Println("Image ID | Repo Tags | Size")
+	for _, image := range images {
+		fmt.Printf("%s | %s | %d\n", image.ID, image.RepoTags, image.Size)
 	}
 }
 
-func buildImage(imgDocker string) {
-	cwd, _ := os.Getwd()
-	cmd := exec.Command("docker", "build", "-t", "treevis", "-f", imgDocker, cwd)
-	output, err := cmd.Output()
+func Start() {
+	cli, err := client.NewEnvClient()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Docker is not installed on your computer.\n%+v", err)
-		os.Exit(1)
+		panic(err)
 	}
-	fmt.Printf("%s", output)
-}
-
-func execContainer() error {
-
-}
-
-func cleaningAfterExec(imgDocker string) {
-
-}
-
-// DoDocker is launching the whole process in order to launch test in a sandboxed environment (Build, Exec, Clean)
-func DoDocker(imgDocker string) {
-	//buildImage(imgDocker)
-	// execContainer()
-	// cleaningAfterExec(imgDocker)
+	startProcess(cli)
 }
