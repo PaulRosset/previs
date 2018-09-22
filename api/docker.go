@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 
@@ -21,7 +20,7 @@ func IsDockerInstall() {
 	cmd := exec.Command("docker", "--version")
 	_, err := cmd.Output()
 	if err != nil {
-		log.Fatalln("You have to install docker for using Previs, For a quick install : curl -fsSL get.docker.com -o get-docker.sh | sh get-docker.sh")
+		fmt.Fprintf(os.Stderr, "You have to install docker for using Previs\nFor a quick install:\n> curl -fsSL get.docker.com -o get-docker.sh\n> sh get-docker.sh\n")
 		os.Exit(2)
 	}
 }
