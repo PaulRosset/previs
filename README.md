@@ -38,6 +38,8 @@ If you run an other operating system or you don't want to install it via snap, y
 
 - `$> go get -v github.com/PaulRosset/previs`
 
+Then make sure that your env variable $PATH contain the path where the go binary live.
+
 ### How to use Previs
 
 Previs is simple to use, he is using the travis configuration (`.travis.yml`) to configure and provide you everythings:
