@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-
-	"github.com/satori/go.uuid"
 )
 
 // Config regroup the travis config
@@ -20,8 +18,7 @@ type Config struct {
 }
 
 func createDockerFile() (*os.File, string, error) {
-	uid := uuid.Must(uuid.NewV4())
-	imgDocker := ".dockerfile-" + uid.String()
+	imgDocker := "Dockerfile"
 	cwd, errOnCwd := os.Getwd()
 	if errOnCwd != nil {
 		return nil, "", errOnCwd
