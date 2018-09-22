@@ -65,7 +65,7 @@ However, Previs is not supporting all the stuff that Travis is supporting yet, a
     - `before_script`
     - `script`
 
-As Travis, Previs understand a failed build when the program ran is returning the exit code **2**.
+Previs understand a failed build when the program ran is returning other than the **0** exit code.
 
 ### Contribute
 

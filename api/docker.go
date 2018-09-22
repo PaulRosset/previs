@@ -111,7 +111,7 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 	case errOnWaiting := <-errChan:
 		return "", errOnWaiting
 	case status := <-statusChan:
-		if status.StatusCode != 2 {
+		if status.StatusCode == 0 {
 			fmt.Println("\nYour tests have passed\n")
 			return respContainerCreater.ID, nil
 		}
