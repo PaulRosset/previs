@@ -42,7 +42,7 @@ func (c *Config) writterFrom() {
 }
 
 func (c *Config) writterAddConfig() {
-	c.dockerfileConfig = c.dockerfileConfig + "COPY ./* ./\n"
+	c.dockerfileConfig = c.dockerfileConfig + "COPY ./ /home/app\n"
 }
 
 func (c *Config) writterRunBeforeInstall() {
