@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -12,7 +11,6 @@ func openConfigTravis() ([]byte, error) {
 	if errOnPath != nil {
 		return nil, errOnPath
 	}
-	fmt.Println(cwd)
 	file, errOnOpen := os.Open(cwd + "/.travis.yml")
 	defer file.Close()
 	if errOnOpen != nil {

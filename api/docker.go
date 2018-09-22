@@ -169,17 +169,17 @@ func Start(imgDocker string, pathDockerImage string) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.WithVersion("1.38"))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error encountered: %+v", err)
+		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
 		os.Exit(2)
 	}
 	err = buildImage(ctx, cli, imgDocker, pathDockerImage)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error encountered: %+v", err)
+		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
 		os.Exit(2)
 	}
 	_, err = startContainer(ctx, cli, imgDocker, pathDockerImage)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error encountered: %+v", err)
+		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
 		os.Exit(2)
 	}
 }
