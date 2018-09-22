@@ -22,6 +22,3 @@ The fact to create a base image permit to let the logic inside the dockerfile in
 
 ### Contributing by adding a base image
 
-We encourage people to create other base image in order to support more and more platform but also extend the possibilities to answer a special case that you need.
-
-To contribute, you can do the following:

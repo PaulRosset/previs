@@ -1,6 +1,16 @@
+<h1 align="center">
+	<br>
+	<img width="220" src="https://rawgit.com/PaulRosset/previs/master/media/logo.png" alt="previs">
+	<br>
+	<br>
+	<br>
+</h1>
+
 # Previs
 
 > 🎯 Use Travis config to run your CI locally to keep your git history clean.
+
+[![Snap Status](https://build.snapcraft.io/badge/PaulRosset/previs.svg)](https://build.snapcraft.io/user/PaulRosset/previs)
 
 ### Motivation
 
@@ -8,15 +18,25 @@
 
 Travis is an amazing tool but sometimes before pushing we are producting small mistake that trigger a fail build from Travis. To correct this build we have to alterate the git history to revert the mistakes, thus our git history can become dirty and you may are lazy to re-write it correctly.
 
-But more than a simple travis copy that run locally, **Previs** can be used as a clean environment of test. What I mean by that, is you can easily use **Previs** without using Travis, one can go without the others. 
+But more than a simple travis copy that run locally, **Previs** can be used as a clean environment of test. What I mean by that, is you can easily use **Previs** without using Travis, one can go without the other. 
 
-### [Snap packager](https://snapcraft.io/) for Linux users
+### Installation
 
-One of the strenght of **Previs** is the fact that he is snapped. He is using the [awesome software developed by Canonical](https://docs.snapcraft.io/) which made very easy to install it.  
-Because without Snap you will be force to install [Go](https://golang.org/doc/install) which is sometime anoying and can be repulsive to use a tool, so here no more excuses, two command and you are ready to use **Previs**:
+#### [Snap packager](https://snapcraft.io/) for Linux users
 
-- `apt-get install snap`
-- `snap install previs`
+One of the strength of **Previs** is the fact that he is snapped. He is using the [snapcraft](https://docs.snapcraft.io/) which made very easy to install on linux system. The snapped software are updated automatically.  
+You have to run two commands and you will be ready to use **Previs**:
+
+- `$> sudo apt install snapd`
+- `$> sudo snap install previs`
+
+For others package manager [see](https://docs.snapcraft.io/core/install).
+
+#### For others users
+
+If you run an other operating system or you don't want to install it via snap, you can still install it "manually" by installing [Go](https://golang.org/doc/install) first, then by doing:
+
+- `$> go get -v github.com/PaulRosset/previs`
 
 ### How to use Previs
 
@@ -29,11 +49,11 @@ Once you are at the root of your repository where the `.travis.yml` is, you can 
 However, Previs is not supporting all the stuff that Travis is supporting yet, at the moment, he is supporting these:
 
 - Languages:
-    - Go
-    - Ruby
+    - ~~Go~~ (dev)
+    - ~~Ruby~~ (dev)
     - Nodejs
-    - Python
-    - Php
+    - ~~Python~~ (dev)
+    - ~~Php~~ (dev)
 
 - Commands:
     - `language`
@@ -58,13 +78,7 @@ Points that will be improved:
 - The architecture and the code can be improved
 - Add other functionalities.?.?...
 
-### Dependencies
-
-- github.com/satori/go.uuid
-- gopkg.in/yaml.v2
-- github.com/docker/docker/client
-
 ### License 
 
-MIT
+**MIT**  
 Paul Rosset
