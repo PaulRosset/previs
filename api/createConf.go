@@ -36,9 +36,14 @@ func reflectInterface(t interface{}) reflect.Value {
 }
 
 func (c *Config) writterFrom() {
-	firstVersion := c.version.Index(0)
-	from := fmt.Sprintf("FROM treevis/%+v:%+v\n", c.platform, firstVersion)
-	c.dockerfileConfig = c.dockerfileConfig + from
+	if c.version.IsValid() {
+		firstVersion := c.version.Index(0)
+		from := fmt.Sprintf("FROM treevis/%+v:%+v\n", c.platform, firstVersion)
+		c.dockerfileConfig = c.dockerfileConfig + from
+	} else {
+		fmt.Fprintf(os.Stderr, "The <from> and <version> directive is mandatory in your travis config")
+		os.Exit(2)
+	}
 }
 
 func (c *Config) writterAddConfig() {
@@ -46,33 +51,44 @@ func (c *Config) writterAddConfig() {
 }
 
 func (c *Config) writterRunBeforeInstall() {
-	var runBeforeInstall string
-	for i := 0; i < c.beforeInstall.Len(); i++ {
-		runBeforeInstall = runBeforeInstall + fmt.Sprintf("RUN %+v\n", c.beforeInstall.Index(i))
+	if c.beforeInstall.IsValid() {
+		var runBeforeInstall string
+		for i := 0; i < c.beforeInstall.Len(); i++ {
+			runBeforeInstall = runBeforeInstall + fmt.Sprintf("RUN %+v\n", c.beforeInstall.Index(i))
+		}
+		c.dockerfileConfig = c.dockerfileConfig + runBeforeInstall
 	}
-	c.dockerfileConfig = c.dockerfileConfig + runBeforeInstall
 }
 
 func (c *Config) writterRunInstall() {
-	var runInstall string
-	for i := 0; i < c.install.Len(); i++ {
-		runInstall = runInstall + fmt.Sprintf("RUN %+v\n", c.install.Index(i))
+	if c.install.IsValid() {
+		var runInstall string
+		for i := 0; i < c.install.Len(); i++ {
+			runInstall = runInstall + fmt.Sprintf("RUN %+v\n", c.install.Index(i))
+		}
+		c.dockerfileConfig = c.dockerfileConfig + runInstall
 	}
-	c.dockerfileConfig = c.dockerfileConfig + runInstall
 }
 
 func (c *Config) writterRunBeforeScript() {
-	var runBeforeScript string
-	for i := 0; i < c.beforeScript.Len(); i++ {
-		runBeforeScript = runBeforeScript + fmt.Sprintf("RUN %+v\n", c.beforeScript.Index(i))
+	if c.beforeScript.IsValid() {
+		var runBeforeScript string
+		for i := 0; i < c.beforeScript.Len(); i++ {
+			runBeforeScript = runBeforeScript + fmt.Sprintf("RUN %+v\n", c.beforeScript.Index(i))
+		}
+		c.dockerfileConfig = c.dockerfileConfig + runBeforeScript
 	}
-	c.dockerfileConfig = c.dockerfileConfig + runBeforeScript
 }
 
 func (c *Config) writterRunScript() {
-	entrypoint := c.script.Index(0)
-	cmd := fmt.Sprintf("CMD %+v", entrypoint)
-	c.dockerfileConfig = c.dockerfileConfig + cmd
+	if c.script.IsValid() {
+		entrypoint := c.script.Index(0)
+		cmd := fmt.Sprintf("CMD %+v", entrypoint)
+		c.dockerfileConfig = c.dockerfileConfig + cmd
+	} else {
+		fmt.Fprintln(os.Stderr, "The <script> directive is mandatory in your travis config")
+		os.Exit(2)
+	}
 }
 
 // Writter is writting the config from travis to a new a dockerfile
