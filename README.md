@@ -16,11 +16,24 @@
 
 > Your very own local CI!
 
-Travis is an amazing tool but sometimes before pushing we are producting small mistake that trigger a fail build from Travis. To correct this build we have to alterate the git history to revert the mistakes, thus our git history can become dirty and you may are lazy to re-write it correctly.
+Travis is an amazing tool but sometimes before pushing we are producting small mistake that trigger a fail build from Travis. To correct this build we have to alterate the git history to revert the mistakes, thus our git history can become dirty or you may are lazy to re-write it correctly.
 
-But more than a simple travis copy that run locally, **Previs** can be used as a clean environment of test. What I mean by that, is you can easily use **Previs** without using Travis, one can go without the other. 
+But more than a simple travis copy that run locally, **Previs** can be used as a clean environment of testing but also run application in it to test their inner working. What I mean by that, is you can easily use **Previs** without using Travis, one can go without the other.
 
 ### Installation
+
+Previs is using docker at his heart, so of course you will need the docker deamon in order to use it.  
+One of the simplest way to install it, it's by using the bash script:
+```
+$> curl -fsSL get.docker.com -o get-docker.sh
+$> sh get-docker.sh
+```
+
+If you are on Mac, it's [here](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac)
+
+You will may have some troubleshooting when installing docker especially with the right management of it, if so, do the following:  
+`sudo usermod -a -G docker $USER`  
+If it still persist after, reboot your system.
 
 #### [Snap packager](https://snapcraft.io/) for Linux users
 
