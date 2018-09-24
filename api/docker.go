@@ -1,18 +1,16 @@
 package api
 
 import (
-	"archive/tar"
-	"bytes"
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/archive"
 )
 
 // IsDockerInstall is verifying that docker deamon is running on the machine.
@@ -25,51 +23,8 @@ func IsDockerInstall() {
 	}
 }
 
-func getBuildContext(imgDocker string) (io.Reader, error) {
-	buildContextReader, errOnOpen := os.Open(imgDocker)
-	if errOnOpen != nil {
-		return nil, errOnOpen
-	}
-	return buildContextReader, nil
-}
-
-func createTarFileBeforeBuild(buildContext io.Reader, imgDocker string, pathDockerImage string) (io.Reader, error) {
-	buf := new(bytes.Buffer)
-	tw := tar.NewWriter(buf)
-	defer tw.Close()
-
-	contentDockerFileReader, err := getBuildContext(pathDockerImage + imgDocker)
-	if err != nil {
-		return nil, err
-	}
-
-	readDockerFile, err := ioutil.ReadAll(contentDockerFileReader)
-	if err != nil {
-		return nil, err
-	}
-
-	tarHeader := &tar.Header{
-		Name: imgDocker,
-		Size: int64(len(readDockerFile)),
-	}
-	err = tw.WriteHeader(tarHeader)
-	if err != nil {
-		return nil, err
-	}
-	_, err = tw.Write(readDockerFile)
-	if err != nil {
-		return nil, err
-	}
-	dockerFileTarReader := bytes.NewReader(buf.Bytes())
-	return dockerFileTarReader, nil
-}
-
 func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string) error {
-	buildContextReader, err := getBuildContext(imgDocker)
-	if err != nil {
-		return err
-	}
-	dockerFileTarReader, err := createTarFileBeforeBuild(buildContextReader, imgDocker, pathDockerImage)
+	dockerFileTarReader, err := archive.TarWithOptions(pathDockerImage, &archive.TarOptions{})
 	if err != nil {
 		return err
 	}
@@ -77,10 +32,11 @@ func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathD
 		ctx,
 		dockerFileTarReader,
 		types.ImageBuildOptions{
-			Context:    dockerFileTarReader,
-			Dockerfile: imgDocker,
-			Remove:     true,
-			Tags:       []string{"previs"},
+			Context:     dockerFileTarReader,
+			Dockerfile:  imgDocker,
+			Remove:      true,
+			ForceRemove: true,
+			Tags:        []string{"previs"},
 		})
 	if err != nil {
 		return err

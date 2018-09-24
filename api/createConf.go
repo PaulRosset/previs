@@ -83,7 +83,7 @@ func (c *Config) writterRunBeforeScript() {
 func (c *Config) writterRunScript() {
 	if c.script.IsValid() {
 		entrypoint := c.script.Index(0)
-		cmd := fmt.Sprintf("CMD %+v", entrypoint)
+		cmd := fmt.Sprintf("CMD %+v\n", entrypoint)
 		c.dockerfileConfig = c.dockerfileConfig + cmd
 	} else {
 		fmt.Fprintln(os.Stderr, "The <script> directive is mandatory in your travis config")
