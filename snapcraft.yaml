@@ -1,5 +1,5 @@
 name: previs
-version: '0.1'
+version: '0.2.0'
 summary: Your very own local CI!
 description: |
   Previs is using the travis configuration file to provide your own local service of continous integration.
