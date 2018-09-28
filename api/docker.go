@@ -30,7 +30,6 @@ func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathD
 	if err != nil {
 		return err
 	}
-
 	defer builderResp.Body.Close()
 	_, err = io.Copy(os.Stdout, builderResp.Body)
 	if err != nil {
@@ -56,11 +55,6 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 	case errOnWaiting := <-errChan:
 		return "", errOnWaiting
 	case status := <-statusChan:
-		if status.StatusCode == 0 {
-			fmt.Println("\nYour tests have passed\n")
-			return respContainerCreater.ID, nil
-		}
-		fmt.Printf("\nYour tests have failed for the container %s\n\nLOGS:\n", respContainerCreater.ID)
 		readerOutputLog, errOnLogs := cli.ContainerLogs(ctx, respContainerCreater.ID, types.ContainerLogsOptions{
 			ShowStderr: true,
 			ShowStdout: true,
@@ -70,41 +64,17 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 		}
 		defer readerOutputLog.Close()
 		io.Copy(os.Stdout, readerOutputLog)
-		err = cleaningImagesContainer(ctx, cli, respContainerCreater.ID, imgDocker, pathDockerImage)
+		err = CleanAll(ctx, cli, respContainerCreater.ID, imgDocker, pathDockerImage)
 		if err != nil {
 			return "", err
 		}
+		if status.StatusCode == 0 {
+			fmt.Println("\nYour build have passed\n")
+			return respContainerCreater.ID, nil
+		}
+		fmt.Printf("\nYour build have failed for the container %s\n\nLOGS:\n", respContainerCreater.ID)
 	}
 	return respContainerCreater.ID, nil
-}
-
-func cleaningImagesContainer(ctx context.Context, cli *client.Client, idContainer string, imgDocker string, pathDockerImage string) error {
-	images, err := cli.ImageList(ctx, types.ImageListOptions{})
-	if err != nil {
-		return err
-	}
-	for _, image := range images {
-		if image.RepoTags[0] == "previs:latest" {
-			_, err := cli.ImageRemove(ctx, image.ID, types.ImageRemoveOptions{
-				Force:         true,
-				PruneChildren: true,
-			})
-			if err != nil {
-				return err
-			}
-		}
-	}
-	err = cli.ContainerRemove(ctx, idContainer, types.ContainerRemoveOptions{
-		Force: true,
-	})
-	if err != nil {
-		return err
-	}
-	err = CleanUnusedDockerfile(pathDockerImage, imgDocker)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // Start the pipeline of test: Build,Launch,Clean
@@ -116,10 +86,18 @@ func Start(imgDocker string, pathDockerImage string) error {
 	}
 	err = buildImage(ctx, cli, imgDocker, pathDockerImage)
 	if err != nil {
+		errOnCleanImages := CleanProducedImages(ctx, cli)
+		if errOnCleanImages != nil {
+			return errOnCleanImages
+		}
 		return err
 	}
-	_, err = startContainer(ctx, cli, imgDocker, pathDockerImage)
+	idContainer, err := startContainer(ctx, cli, imgDocker, pathDockerImage)
 	if err != nil {
+		errOnCleanCOntainer := CleanProducedContainer(ctx, cli, idContainer)
+		if errOnCleanCOntainer != nil {
+			return errOnCleanCOntainer
+		}
 		return err
 	}
 	return nil
