@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-	api.IsDockerInstall()
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
@@ -16,8 +15,14 @@ func main() {
 	}
 	imgDocker, err := api.Writter()
 	if err != nil {
+		api.CleanUnusedDockerfile(cwd, imgDocker)
 		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
 		os.Exit(2)
 	}
-	api.Start(imgDocker, cwd+"/")
+	err = api.Start(imgDocker, cwd+"/")
+	if err != nil {
+		api.CleanUnusedDockerfile(cwd, imgDocker)
+		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
+		os.Exit(2)
+	}
 }

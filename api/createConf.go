@@ -116,7 +116,6 @@ func Writter() (string, error) {
 	exploitConfig.writterRunInstall()
 	exploitConfig.writterRunBeforeScript()
 	exploitConfig.writterRunScript()
-	fmt.Println(exploitConfig.dockerfileConfig)
 	file.WriteString(exploitConfig.dockerfileConfig)
 	return imgDocker, nil
 }

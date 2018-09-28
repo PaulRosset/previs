@@ -5,23 +5,12 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 )
-
-// IsDockerInstall is verifying that docker deamon is running on the machine.
-func IsDockerInstall() {
-	cmd := exec.Command("docker", "--version")
-	_, err := cmd.Output()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "You have to install docker for using Previs\nFor a quick install:\n> curl -fsSL get.docker.com -o get-docker.sh\n> sh get-docker.sh\n")
-		os.Exit(2)
-	}
-}
 
 func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string) error {
 	dockerFileTarReader, err := archive.TarWithOptions(pathDockerImage, &archive.TarOptions{})
@@ -111,31 +100,27 @@ func cleaningImagesContainer(ctx context.Context, cli *client.Client, idContaine
 	if err != nil {
 		return err
 	}
-	if _, err := os.Stat(pathDockerImage + "/" + imgDocker); err == nil {
-		err = os.Remove(pathDockerImage + "/" + imgDocker)
-		if err != nil {
-			return err
-		}
+	err = CleanUnusedDockerfile(pathDockerImage, imgDocker)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 // Start the pipeline of test: Build,Launch,Clean
-func Start(imgDocker string, pathDockerImage string) {
+func Start(imgDocker string, pathDockerImage string) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.WithVersion("1.38"))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
-		os.Exit(2)
+		return err
 	}
 	err = buildImage(ctx, cli, imgDocker, pathDockerImage)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
-		os.Exit(2)
+		return err
 	}
 	_, err = startContainer(ctx, cli, imgDocker, pathDockerImage)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
-		os.Exit(2)
+		return err
 	}
+	return nil
 }
