@@ -45,6 +45,8 @@ You have to run two commands and you will be ready to use **Previs**:
 
 For others package manager [see](https://docs.snapcraft.io/core/install).
 
+> Snap binary are located in `/snap/bin/`, make sure it is integrated in your $PATH env.
+
 #### For others users
 
 If you run an other operating system or you don't want to install it via snap, you can still install it "manually" by installing [Go](https://golang.org/doc/install) first, then by doing:

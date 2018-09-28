@@ -7,7 +7,7 @@ description: |
   But more than a local trevis, it provides you a way of testing in a sandboxed environment.
 
 grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+confinement: strict
 
 parts:
   previs:
