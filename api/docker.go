@@ -28,7 +28,6 @@ func showLoaderWhenBuildImage(Body io.ReadCloser) {
 		var Build building
 		err := decode.Decode(&Build)
 		if err != nil {
-			fmt.Println("HELLo")
 			break
 		}
 		if Build.Status != "" {
