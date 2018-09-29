@@ -43,7 +43,7 @@ One of the strength of **Previs** is the fact that he is snapped. He is using th
 You have to run two commands and you will be ready to use **Previs**:
 
 - `$> sudo apt install snapd`
-- `$> sudo snap install previs`
+- `$> sudo snap install previs --beta`
 
 For others package manager [see](https://docs.snapcraft.io/core/install).
 
