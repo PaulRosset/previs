@@ -20,6 +20,8 @@ Travis is an amazing tool but sometimes before pushing we are producting small m
 
 But more than a simple travis copy that run locally, **Previs** can be used as a clean environment of testing but also run application in it to test their inner working. What I mean by that, is you can easily use **Previs** without using Travis, one can go without the other.
 
+**Previs** is still in active development.
+
 ### Installation
 
 Previs is using docker at his heart, so of course you will need the docker deamon in order to use it.  
@@ -81,6 +83,7 @@ Go [here](https://github.com/PaulRosset/previs/tree/master/baseImages) to check 
     - `install`
     - `before_script`
     - `script`
+    - `after_script`
 
 Previs understand a failed build when the program ran is returning other than the **0** exit code.
 

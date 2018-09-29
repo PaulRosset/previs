@@ -14,6 +14,7 @@ type Config struct {
 	install          reflect.Value
 	beforeScript     reflect.Value
 	script           reflect.Value
+	afterScript      reflect.Value
 	dockerfileConfig string
 }
 
@@ -91,6 +92,16 @@ func (c *Config) writterRunScript() {
 	}
 }
 
+func (c *Config) writterRunAfterScript() {
+	if c.afterScript.IsValid() {
+		var runAfterScript string
+		for i := 0; i < c.afterScript.Len(); i++ {
+			runAfterScript = runAfterScript + fmt.Sprintf("RUN %+v\n", c.afterScript.Index(i))
+		}
+		c.dockerfileConfig = c.dockerfileConfig + runAfterScript
+	}
+}
+
 // Writter is writting the config from travis to a new a dockerfile
 func Writter() (string, error) {
 	config, errOnGetConfigTravis := GetConfigFromTravis()
@@ -104,6 +115,7 @@ func Writter() (string, error) {
 		install:          reflectInterface(config["install"]),
 		beforeScript:     reflectInterface(config["before_script"]),
 		script:           reflectInterface(config["script"]),
+		afterScript:      reflectInterface(config["after_script"]),
 		dockerfileConfig: "",
 	}
 	file, imgDocker, errOnCreationDockerfile := createDockerFile()
@@ -116,6 +128,7 @@ func Writter() (string, error) {
 	exploitConfig.writterRunInstall()
 	exploitConfig.writterRunBeforeScript()
 	exploitConfig.writterRunScript()
+	exploitConfig.writterRunAfterScript()
 	file.WriteString(exploitConfig.dockerfileConfig)
 	return imgDocker, nil
 }
