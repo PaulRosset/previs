@@ -96,7 +96,7 @@ Points that will be improved:
 - Find a better solutions for the low level images that reside in `baseImages/` folder. They are currently hosted on the official docker registry. The workflow to add a version or a language support is not very convenient, because we have to create the images locally then send it to the official docker registry, can we a better way to do this ?
 - Adding support for more Languages
 - Adding support for more commands (Env Variables are **High** priority)
-- Add support for indicating the loading states, when pulling, building and starting.
+- Clean when aborting via SIGNALs
 - Add other functionalities...
 
 ### License 
