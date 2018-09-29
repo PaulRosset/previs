@@ -2,15 +2,43 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 
+	tm "github.com/buger/goterm"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 )
+
+type building struct {
+	Status   string `json:"status"`
+	Stream   string `json:"stream"`
+	Progress string `json:"progress"`
+}
+
+func showLoaderWhenBuildImage(Body io.ReadCloser) {
+	tm.Clear()
+	decode := json.NewDecoder(Body)
+	for decode.More() {
+		tm.MoveCursor(1, 1)
+		var Build building
+		err := decode.Decode(&Build)
+		if err != nil {
+			fmt.Println("HELLo")
+			break
+		}
+		if Build.Status != "" {
+			tm.Printf("Building Image\nStatus: %s\nProgress: +%v", Build.Status, Build.Progress)
+		} else if len(Build.Stream) > 1 && Build.Stream[:4] == "Step" {
+			tm.Printf("%+v", Build.Stream)
+		}
+		tm.Flush()
+	}
+}
 
 func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string) error {
 	dockerFileTarReader, err := archive.TarWithOptions(pathDockerImage, &archive.TarOptions{})
@@ -31,10 +59,7 @@ func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathD
 		return err
 	}
 	defer builderResp.Body.Close()
-	_, err = io.Copy(os.Stdout, builderResp.Body)
-	if err != nil {
-		return err
-	}
+	showLoaderWhenBuildImage(builderResp.Body)
 	return nil
 }
 
