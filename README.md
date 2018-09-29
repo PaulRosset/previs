@@ -66,11 +66,13 @@ Once you are at the root of your repository where the `.travis.yml` is, you can 
 However, Previs is not supporting all the stuff that Travis is supporting yet, at the moment, he is supporting these:
 
 - Languages:
-    - ~~Go~~ (dev)
+    - Go
     - ~~Ruby~~ (dev)
     - Nodejs
-    - ~~Python~~ (dev)
+    - Python
     - ~~Php~~ (dev)
+
+Go [here](https://github.com/PaulRosset/previs/tree/master/baseImages) to check it out the supported language and version
 
 - Commands:
     - `language`
@@ -88,12 +90,11 @@ Any contributions is very welcomed, let's do something bigger and stronger toget
 
 Points that will be improved:
 - Improve the way of the docker images are wrote before build
-- Find a better solutions for the low level images that reside in `baseImages/` folder. They are currently hosted on the official docker registry.
+- Find a better solutions for the low level images that reside in `baseImages/` folder. They are currently hosted on the official docker registry. The workflow to add a version or a language support is not very convenient, because we have to create the images locally then send it to the official docker registry, can we a better way to do this ?
 - Adding support for more Languages
 - Adding support for more commands (Env Variables are **High** priority)
 - Add support for indicating the loading states, when pulling, building and starting.
-- The architecture and the code can be improved
-- Add other functionalities.?.?...
+- Add other functionalities...
 
 ### License 
 
