@@ -14,7 +14,6 @@ type Config struct {
 	install          reflect.Value
 	beforeScript     reflect.Value
 	script           reflect.Value
-	afterScript      reflect.Value
 	dockerfileConfig string
 }
 
@@ -37,9 +36,17 @@ func reflectInterface(t interface{}) reflect.Value {
 }
 
 func (c *Config) writterFrom() {
+	var from string
+	images := map[string]string{
+		"node_js": "nodejs",
+	}
 	if c.version.IsValid() {
 		firstVersion := c.version.Index(0)
-		from := fmt.Sprintf("FROM treevis/%+v:%+v\n", c.platform, firstVersion)
+		if platform, ok := images[c.platform]; ok {
+			from = fmt.Sprintf("FROM %+v:%+v\n", platform, firstVersion)
+		} else {
+			from = fmt.Sprintf("FROM %+v:%+v\n", c.platform, firstVersion)
+		}
 		c.dockerfileConfig = c.dockerfileConfig + from
 	} else {
 		fmt.Fprintf(os.Stderr, "The <from> and <version> directive is mandatory in your travis config")
@@ -48,7 +55,7 @@ func (c *Config) writterFrom() {
 }
 
 func (c *Config) writterAddConfig() {
-	c.dockerfileConfig = c.dockerfileConfig + "COPY ./ /home/app\n"
+	c.dockerfileConfig = c.dockerfileConfig + "RUN apt-get update\nWORKDIR /home/app/\nCOPY ./ /home/app\n"
 }
 
 func (c *Config) writterRunBeforeInstall() {
@@ -92,21 +99,11 @@ func (c *Config) writterRunScript() {
 	}
 }
 
-func (c *Config) writterRunAfterScript() {
-	if c.afterScript.IsValid() {
-		var runAfterScript string
-		for i := 0; i < c.afterScript.Len(); i++ {
-			runAfterScript = runAfterScript + fmt.Sprintf("RUN %+v\n", c.afterScript.Index(i))
-		}
-		c.dockerfileConfig = c.dockerfileConfig + runAfterScript
-	}
-}
-
 // Writter is writting the config from travis to a new a dockerfile
 func Writter() (string, error) {
-	config, errOnGetConfigTravis := GetConfigFromTravis()
-	if errOnGetConfigTravis != nil {
-		return "", errOnGetConfigTravis
+	config, err := GetConfigFromTravis()
+	if err != nil {
+		return "", err
 	}
 	exploitConfig := &Config{
 		platform:         config["language"].(string),
@@ -115,12 +112,11 @@ func Writter() (string, error) {
 		install:          reflectInterface(config["install"]),
 		beforeScript:     reflectInterface(config["before_script"]),
 		script:           reflectInterface(config["script"]),
-		afterScript:      reflectInterface(config["after_script"]),
 		dockerfileConfig: "",
 	}
-	file, imgDocker, errOnCreationDockerfile := createDockerFile()
-	if errOnCreationDockerfile != nil {
-		return "", errOnCreationDockerfile
+	file, imgDocker, err := createDockerFile()
+	if err != nil {
+		return "", err
 	}
 	exploitConfig.writterFrom()
 	exploitConfig.writterAddConfig()
@@ -128,7 +124,10 @@ func Writter() (string, error) {
 	exploitConfig.writterRunInstall()
 	exploitConfig.writterRunBeforeScript()
 	exploitConfig.writterRunScript()
-	exploitConfig.writterRunAfterScript()
 	file.WriteString(exploitConfig.dockerfileConfig)
+	err = file.Close()
+	if err != nil {
+		return "", err
+	}
 	return imgDocker, nil
 }

@@ -68,13 +68,7 @@ Once you are at the root of your repository where the `.travis.yml` is, you can 
 However, Previs is not supporting all the stuff that Travis is supporting yet, at the moment, he is supporting these:
 
 - Languages:
-    - Go
-    - ~~Ruby~~ (dev)
-    - Nodejs
-    - Python
-    - ~~Php~~ (dev)
-
-Go [here](https://github.com/PaulRosset/previs/tree/master/baseImages) to check it out the supported language and version
+    - Normally, all the language are already supported except the only languages name that differ between the travis config and the name of the image registered on the docker registry, in that case we have to add the entry in the dictionary. As an example the nodejs language demonstrate it. In the travis configuration we have to provide the name `node_js` but in the docker registry the official nodejs image is registered as `nodejs`.
 
 - Commands:
     - `language`
@@ -83,7 +77,6 @@ Go [here](https://github.com/PaulRosset/previs/tree/master/baseImages) to check 
     - `install`
     - `before_script`
     - `script`
-    - `after_script`
 
 Previs understand a failed build when the program ran is returning other than the **0** exit code.
 
@@ -93,8 +86,6 @@ Any contributions is very welcomed, let's do something bigger and stronger toget
 
 Points that will be improved:
 - Improve the way of the docker images are wrote before build
-- Find a better solutions for the low level images that reside in `baseImages/` folder. They are currently hosted on the official docker registry. The workflow to add a version or a language support is not very convenient, because we have to create the images locally then send it to the official docker registry, can we a better way to do this ?
-- Adding support for more Languages
 - Adding support for more commands (Env Variables are **High** priority)
 - Clean when aborting via SIGNALs
 - Add other functionalities...
