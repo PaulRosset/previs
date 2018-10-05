@@ -14,6 +14,7 @@ type Config struct {
 	install          reflect.Value
 	beforeScript     reflect.Value
 	script           reflect.Value
+	env              reflect.Value
 	dockerfileConfig string
 }
 
@@ -99,11 +100,21 @@ func (c *Config) writterRunScript() {
 	}
 }
 
+func (c *Config) getEnvsVariables() []string {
+	var envs []string
+	if c.env.IsValid() {
+		for i := 0; i < c.env.Len(); i++ {
+			envs = append(envs, fmt.Sprintf("%+v", c.env.Index(i)))
+		}
+	}
+	return envs
+}
+
 // Writter is writting the config from travis to a new a dockerfile
-func Writter() (string, error) {
+func Writter() (string, []string, error) {
 	config, err := GetConfigFromTravis()
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	exploitConfig := &Config{
 		platform:         config["language"].(string),
@@ -112,11 +123,12 @@ func Writter() (string, error) {
 		install:          reflectInterface(config["install"]),
 		beforeScript:     reflectInterface(config["before_script"]),
 		script:           reflectInterface(config["script"]),
+		env:              reflectInterface(config["env"]),
 		dockerfileConfig: "",
 	}
 	file, imgDocker, err := createDockerFile()
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	exploitConfig.writterFrom()
 	exploitConfig.writterAddConfig()
@@ -124,10 +136,11 @@ func Writter() (string, error) {
 	exploitConfig.writterRunInstall()
 	exploitConfig.writterRunBeforeScript()
 	exploitConfig.writterRunScript()
+	envs := exploitConfig.getEnvsVariables()
 	file.WriteString(exploitConfig.dockerfileConfig)
 	err = file.Close()
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return imgDocker, nil
+	return imgDocker, envs, nil
 }

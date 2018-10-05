@@ -62,10 +62,11 @@ func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathD
 	return nil
 }
 
-func startContainer(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string) (string, error) {
+func startContainer(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string, envVar []string) (string, error) {
 	respContainerCreater, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: "previs",
 		Tty:   true,
+		Env:   envVar,
 	}, nil, nil, "previs")
 	if err != nil {
 		return "", err
@@ -102,7 +103,7 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 }
 
 // Start the pipeline of test: Build,Launch,Clean
-func Start(imgDocker string, pathDockerImage string) error {
+func Start(imgDocker string, pathDockerImage string, envVar []string) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.WithVersion("1.38"))
 	if err != nil {
@@ -116,7 +117,7 @@ func Start(imgDocker string, pathDockerImage string) error {
 		}
 		return err
 	}
-	idContainer, err := startContainer(ctx, cli, imgDocker, pathDockerImage)
+	idContainer, err := startContainer(ctx, cli, imgDocker, pathDockerImage, envVar)
 	if err != nil {
 		errOnCleanCOntainer := CleanProducedContainer(ctx, cli, idContainer)
 		if errOnCleanCOntainer != nil {

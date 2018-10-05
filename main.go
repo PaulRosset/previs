@@ -13,13 +13,13 @@ func main() {
 		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
 		os.Exit(2)
 	}
-	imgDocker, err := api.Writter()
+	imgDocker, envsVar, err := api.Writter()
 	if err != nil {
 		api.CleanUnusedDockerfile(cwd, imgDocker)
 		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
 		os.Exit(2)
 	}
-	err = api.Start(imgDocker, cwd+"/")
+	err = api.Start(imgDocker, cwd+"/", envsVar)
 	if err != nil {
 		api.CleanUnusedDockerfile(cwd, imgDocker)
 		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)

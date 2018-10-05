@@ -9,3 +9,6 @@ install:
   - npm install
 script:
   - npm run test
+env:
+  - DB=mongo_db
+  - PATH=$PATH
