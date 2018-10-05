@@ -16,9 +16,9 @@
 
 > Your very own local CI!
 
-Travis is an amazing tool but sometimes before pushing we are producting small mistake that trigger a fail build from Travis. To correct this build we have to alterate the git history to revert the mistakes, thus our git history can become dirty or you may are lazy to re-write it correctly.
-
-But more than a simple travis copy that run locally, **Previs** can be used as a clean environment of testing but also run application in it to test their inner working. What I mean by that, is you can easily use **Previs** without using Travis, one can go without the other.
+Previs is using the travis configuration file to provide your own local service of continous integration.
+No more accidental error that trigger a fail build, no more plumbing on your git history. 
+But more than a local trevis, it provides you a way of testing in a sandboxed environment.
 
 **Previs** is still in active development.
 
@@ -68,7 +68,7 @@ Once you are at the root of your repository where the `.travis.yml` is, you can 
 However, Previs is not supporting all the stuff that Travis is supporting yet, at the moment, he is supporting these:
 
 - Languages:
-    - Normally, all the language are already supported except the only languages name that differ between the travis config and the name of the image registered on the docker registry, in that case we have to add the entry in the dictionary. As an example the nodejs language demonstrate it. In the travis configuration we have to provide the name `node_js` but in the docker registry the official nodejs image is registered as `nodejs`.
+    - Normally, all the language are already supported except the only languages name that differ between the travis config and the name of the image registered on the docker registry, in that case we have to add the entry in the dictionary. As an example the nodejs language demonstrate it. In the travis configuration we have to provide the name `node_js` but in the docker registry the official nodejs image is registered as `node`.
 
 - Commands:
     - `language`
@@ -85,8 +85,9 @@ Previs understand a failed build when the program ran is returning other than th
 Any contributions is very welcomed, let's do something bigger and stronger together!
 
 Points that will be improved:
+- Do we still keep the .travis.yml config file or create a proper config file, because we can't produce all the stuff that travis is producing ?
 - Improve the way of the docker images are wrote before build
-- Adding support for more commands (Env Variables are **High** priority)
+- Adding support for more commands
 - Clean when aborting via SIGNALs
 - Add other functionalities...
 
