@@ -39,7 +39,7 @@ func reflectInterface(t interface{}) reflect.Value {
 func (c *Config) writterFrom() {
 	var from string
 	images := map[string]string{
-		"node_js": "nodejs",
+		"node_js": "node",
 	}
 	if c.version.IsValid() {
 		firstVersion := c.version.Index(0)
