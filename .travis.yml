@@ -1,14 +1,18 @@
-language: node_js
-node_js:
-  - 8
-  - 9
-before_install:
-  - npm task
-  - npm polo
-install:
-  - npm install
-script:
-  - npm run test
-env:
-  - DB=mongo_db
-  - PATH=$PATH
+language: go
+go:
+  - 1.11
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: nodejs-test-1
+      before_install:
+        - sudo apt-get update
+        - sudo apt-get install -y git
+      install:
+        - go get ./
+        - git clone https://github.com/PaulRosset/rehover.git
+        - cd rehover
+      script: go run ../main.go

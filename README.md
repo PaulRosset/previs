@@ -10,6 +10,7 @@
 
 > 🎯 Use Travis config to run your CI locally to keep your git history clean.
 
+[![Travis CI Build Status](https://api.travis-ci.com/PaulRosset/previs.svg?branch=master)](https://travis-ci.org/PaulRosset/previs)
 [![Snap Status](https://build.snapcraft.io/badge/PaulRosset/previs.svg)](https://build.snapcraft.io/user/PaulRosset/previs)
 
 ### Motivation
@@ -79,6 +80,11 @@ However, Previs is not supporting all the stuff that Travis is supporting yet, a
     - `script`
 
 Previs understand a failed build when the program ran is returning other than the **0** exit code.
+
+### Testing
+
+Concerning the workflow of testing, rather than create unit tests on multiple call systems that already been tested espcially docker calls, we instead run the program in real world use case to verify nothing broke and prevent regressions.  
+To understand it, you can check out the `.travis.yml` file that serve this purpose.
 
 ### Contribute
 
