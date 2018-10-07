@@ -12,5 +12,7 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install -y git
       install:
-        - git clone https://github.com/PaulRosset/rehover.git && cd rehover
+        - go get ./
+        - git clone https://github.com/PaulRosset/rehover.git
+        - cd rehover
       script: go run ../main.go
