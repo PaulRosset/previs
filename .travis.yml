@@ -8,7 +8,7 @@ services:
 jobs:
   include:
     - stage: nodejs-test-1
-      name: Testing nodejs env with rehover project
+      name: Testing nodejs environment with rehover project
       before_install:
         - sudo apt-get update
       install:
