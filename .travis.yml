@@ -1,14 +1,17 @@
-language: node_js
-node_js:
-  - 8
-  - 9
-before_install:
-  - npm task
-  - npm polo
-install:
-  - npm install
-script:
-  - npm run test
-env:
-  - DB=mongo_db
-  - PATH=$PATH
+sudo: required
+language: go
+go:
+  - 1.11
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: test1
+      before_install:
+        - apt-get update
+        - apt-get install -y git
+      install:
+        - git clone https://github.com/PaulRosset/rehover.git && cd previs
+      script: go run ../main.go
