@@ -12,5 +12,5 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install -y git
       install:
-        - git clone https://github.com/PaulRosset/rehover.git && cd previs
+        - git clone https://github.com/PaulRosset/rehover.git && cd rehover
       script: go run ../main.go
