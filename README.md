@@ -21,6 +21,8 @@ Previs is using the travis configuration file to provide your own local service 
 No more accidental error that trigger a fail build, no more plumbing on your git history. 
 But more than a local trevis, it provides you a way of testing in a sandboxed environment.
 
+Previs is also providing a way to run things in a clean environment with no side effect thank's to Docker.
+
 **Previs** is still in active development.
 
 ### Installation
