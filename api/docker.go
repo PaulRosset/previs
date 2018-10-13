@@ -94,10 +94,10 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 			return "", err
 		}
 		if status.StatusCode == 0 {
-			fmt.Println("\nYour build have passed\n")
+			fmt.Println("\nYour build has passed\n")
 			return respContainerCreater.ID, nil
 		}
-		fmt.Printf("\nYour build have failed for the container %s\n\nLOGS:\n", respContainerCreater.ID)
+		fmt.Printf("\nYour build has failed for the container %s\n\nLOGS:\n", respContainerCreater.ID)
 	}
 	return respContainerCreater.ID, nil
 }

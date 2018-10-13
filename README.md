@@ -17,8 +17,8 @@
 
 > Your very own local CI!
 
-Previs is using the travis configuration file to provide your own local service of continous integration.
-No more accidental error that trigger a fail build, no more plumbing on your git history. 
+Previs is using the travis configuration mechanism to provide your own local service of continuous integration.
+No more accidental error that trigger a fail build, no more plumbing on your git history.
 But more than a local trevis, it provides you a way of testing in a sandboxed environment.
 
 **Previs** is still in active development.
@@ -58,15 +58,21 @@ If you run an other operating system or you don't want to install it via snap, y
 
 Then make sure that your env variable $PATH contain the path where the go binary live.
 
+Or you can still download the binary of release.
+
 ### How to use Previs
 
-Previs is simple to use, he is using the travis configuration (`.travis.yml`) to configure and provide you everythings:
+Previs is simple to use, he is using the travis mechanism to run 'things' in a clean environment.
 
-Once you are at the root of your repository where the `.travis.yml` is, you can launch:
+However, since we are running things locally, we can't reproduce everythings that Travis is providing, so when the `.travis.yml` get too complex, you have the possibility to switch on a custom file named `.previs.yml`, then previs will take the configuration of the `.previs.yml`.
 
-`$> previs`
+Once you are at the root of your repository where the `.travis.yml` or `.previs.yml` is, you can launch:
 
-However, Previs is not supporting all the stuff that Travis is supporting yet, at the moment, he is supporting these:
+`$> previs [-p]`
+
+The `-p` command indicate to previs to take the configuration of the `.previs.yml` instead of the `.travis.yml`.
+
+Previs is for the moment supporting these commands:
 
 - Languages:
     - Normally, all the language are already supported except the only languages name that differ between the travis config and the name of the image registered on the docker registry, in that case we have to add the entry in the dictionary. As an example the nodejs language demonstrate it. In the travis configuration we have to provide the name `node_js` but in the docker registry the official nodejs image is registered as `node`.
@@ -83,19 +89,17 @@ Previs understand a failed build when the program ran is returning other than th
 
 ### Testing
 
-Concerning the workflow of testing, rather than create unit tests on multiple call systems that already been tested espcially docker calls, we instead run the program in real world use case to verify nothing broke and prevent regressions.  
-To understand it, you can check out the `.travis.yml` file that serve this purpose.
+Concerning the workflow of testing, rather than create unit tests on multiple call systems that already been tested especially docker calls, we instead run the program in real world use case to verify nothing broke and prevent regressions.  
+To understand it, you can check out the `.travis.yml` file that serve th is purpose.
 
 ### Contribute
 
 Any contributions is very welcomed, let's do something bigger and stronger together!
 
 Points that will be improved:
-- Do we still keep the .travis.yml config file or create a proper config file, because we can't produce all the stuff that travis is producing ?
 - Improve the way of the docker images are wrote before build
 - Adding support for more commands
 - Clean when aborting via SIGNALs
-- Add other functionalities...
 
 ### License 
 

@@ -6,12 +6,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func openConfigTravis() ([]byte, error) {
-	cwd, errOnPath := os.Getwd()
-	if errOnPath != nil {
-		return nil, errOnPath
-	}
-	file, errOnOpen := os.Open(cwd + "/.travis.yml")
+func openConfigTravis(configFile string) ([]byte, error) {
+	file, errOnOpen := os.Open(configFile)
 	defer file.Close()
 	if errOnOpen != nil {
 		return nil, errOnOpen
@@ -29,8 +25,8 @@ func openConfigTravis() ([]byte, error) {
 }
 
 // GetConfigFromTravis Get the config inside the travis file and transform it in a format that can be readable
-func GetConfigFromTravis() (map[string]interface{}, error) {
-	config, errOnLoad := openConfigTravis()
+func GetConfigFromTravis(configFile string) (map[string]interface{}, error) {
+	config, errOnLoad := openConfigTravis(configFile)
 	if errOnLoad != nil {
 		return nil, errOnLoad
 	}

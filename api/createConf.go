@@ -111,8 +111,8 @@ func (c *Config) getEnvsVariables() []string {
 }
 
 // Writter is writting the config from travis to a new a dockerfile
-func Writter() (string, []string, error) {
-	config, err := GetConfigFromTravis()
+func Writter(configFile string) (string, []string, error) {
+	config, err := GetConfigFromTravis(configFile)
 	if err != nil {
 		return "", nil, err
 	}
