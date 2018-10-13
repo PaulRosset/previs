@@ -1,12 +1,12 @@
 name: previs
-version: '0.3.1'
+version: '0.4.0'
 summary: Your very own local CI!
 description: |
   Previs is using the travis configuration file to provide your own local service of continous integration.
   No more accidental error that trigger a fail build, no more plumbing on your git history. 
   But more than a local trevis, it provides you a way of testing in a sandboxed environment.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
+grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
 
 parts:
