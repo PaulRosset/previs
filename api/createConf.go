@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func createDockerFile() (*os.File, string, error) {
-	imgDocker := "Dockerfile"
+	imgDocker := "Previsfile"
 	cwd, errOnCwd := os.Getwd()
 	if errOnCwd != nil {
 		return nil, "", errOnCwd
