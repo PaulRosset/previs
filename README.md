@@ -1,6 +1,6 @@
 <h1 align="center">
 	<br>
-	<img width="220" src="https://rawgit.com/PaulRosset/previs/master/media/logo.png" alt="previs">
+	<img width="160" src="https://rawgit.com/PaulRosset/previs/master/media/logo.png" alt="previs">
 	<br>
 	<br>
 	<br>
@@ -8,18 +8,18 @@
 
 # Previs
 
-> 🎯 Use Travis config to run your CI locally to keep your git history clean.
+> 🎯 Use Travis configuration to run stuff locally in a clean environment. 
 
 [![Travis CI Build Status](https://api.travis-ci.com/PaulRosset/previs.svg?branch=master)](https://travis-ci.org/PaulRosset/previs)
 [![Snap Status](https://build.snapcraft.io/badge/PaulRosset/previs.svg)](https://build.snapcraft.io/user/PaulRosset/previs)
 
 ### Motivation
 
-> Your very own local CI!
+> Your very own local way of testing!
 
 Previs is using the travis configuration mechanism to provide your own local service of continuous integration.
 No more accidental error that trigger a fail build, no more plumbing on your git history.
-But more than a local trevis, it provides you a way of testing in a sandboxed environment.
+But more than a local trevis, it provides you a way of testing in a sandboxed environment and more...
 
 Previs is also providing a way to run things in a clean environment with no side effect thank's to Docker.
 
@@ -27,7 +27,7 @@ Previs is also providing a way to run things in a clean environment with no side
 
 ### Installation
 
-Previs is using docker at his heart, so of course you will need the docker deamon in order to use it.  
+Previs is using docker at his heart, so of course you will need the docker deamon.  
 One of the simplest way to install it, it's by using the bash script:
 ```
 $> curl -fsSL get.docker.com -o get-docker.sh
@@ -42,7 +42,7 @@ If it still persist after, reboot your system.
 
 #### [Snap packager](https://snapcraft.io/) for Linux users
 
-One of the strength of **Previs** is the fact that he is snapped. He is using the [snapcraft](https://docs.snapcraft.io/) which made very easy to install on linux system. The snapped software are updated automatically.  
+**Previs** is snapped. He is using [snapcraft](https://docs.snapcraft.io/) which made very easy to install on linux system. The snapped software are updated automatically.  
 You have to run two commands and you will be ready to use **Previs**:
 
 - `$> sudo apt install snapd`
