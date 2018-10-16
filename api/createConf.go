@@ -36,7 +36,7 @@ func reflectInterface(t interface{}) reflect.Value {
 	return s
 }
 
-func (c *Config) writterFrom() {
+func (c *Config) writerFrom() {
 	var from string
 	images := map[string]string{
 		"node_js": "node",
@@ -56,11 +56,11 @@ func (c *Config) writterFrom() {
 	}
 }
 
-func (c *Config) writterAddConfig() {
+func (c *Config) writerAddConfig() {
 	c.dockerfileConfig = c.dockerfileConfig + "RUN apt-get update\nWORKDIR /home/app/\nCOPY ./ /home/app\n"
 }
 
-func (c *Config) writterRunBeforeInstall() {
+func (c *Config) writerRunBeforeInstall() {
 	if c.beforeInstall.IsValid() {
 		var runBeforeInstall string
 		for i := 0; i < c.beforeInstall.Len(); i++ {
@@ -70,7 +70,7 @@ func (c *Config) writterRunBeforeInstall() {
 	}
 }
 
-func (c *Config) writterRunInstall() {
+func (c *Config) writerRunInstall() {
 	if c.install.IsValid() {
 		var runInstall string
 		for i := 0; i < c.install.Len(); i++ {
@@ -80,7 +80,7 @@ func (c *Config) writterRunInstall() {
 	}
 }
 
-func (c *Config) writterRunBeforeScript() {
+func (c *Config) writerRunBeforeScript() {
 	if c.beforeScript.IsValid() {
 		var runBeforeScript string
 		for i := 0; i < c.beforeScript.Len(); i++ {
@@ -90,7 +90,7 @@ func (c *Config) writterRunBeforeScript() {
 	}
 }
 
-func (c *Config) writterRunScript() {
+func (c *Config) writerRunScript() {
 	if c.script.IsValid() {
 		entrypoint := c.script.Index(0)
 		cmd := fmt.Sprintf("CMD %+v\n", entrypoint)
@@ -111,8 +111,8 @@ func (c *Config) getEnvsVariables() []string {
 	return envs
 }
 
-// Writter is writting the config from travis to a new a dockerfile
-func Writter(configFile string) (string, []string, error) {
+// writer is writting the config from travis to a new a dockerfile
+func writer(configFile string) (string, []string, error) {
 	config, err := GetConfigFromTravis(configFile)
 	if err != nil {
 		return "", nil, err
@@ -131,12 +131,12 @@ func Writter(configFile string) (string, []string, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	exploitConfig.writterFrom()
-	exploitConfig.writterAddConfig()
-	exploitConfig.writterRunBeforeInstall()
-	exploitConfig.writterRunInstall()
-	exploitConfig.writterRunBeforeScript()
-	exploitConfig.writterRunScript()
+	exploitConfig.writerFrom()
+	exploitConfig.writerAddConfig()
+	exploitConfig.writerRunBeforeInstall()
+	exploitConfig.writerRunInstall()
+	exploitConfig.writerRunBeforeScript()
+	exploitConfig.writerRunScript()
 	envs := exploitConfig.getEnvsVariables()
 	file.WriteString(exploitConfig.dockerfileConfig)
 	err = file.Close()
