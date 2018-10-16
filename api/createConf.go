@@ -5,7 +5,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/srishanbhattarai/previs/travis"
+	"github.com/PaulRosset/previs/travis"
 )
 
 // API handles all the Docker related tasks as defined by the config.
