@@ -23,7 +23,7 @@ func main() {
 		os.Exit(2)
 	}
 	configFile := whichConfig(os.Args[1:])
-	imgDocker, envsVar, err := api.Writter(cwd + "/" + configFile)
+	imgDocker, envsVar, err := api.Writer(cwd + "/" + configFile)
 	if err != nil {
 		api.CleanUnusedDockerfile(cwd, imgDocker)
 		fmt.Fprintf(os.Stderr, "error encountered: %+v\n", err)
