@@ -10,16 +10,16 @@ import (
 )
 
 // Config represents values from a '.travis.yml' file. Config options are represented
-// with a slice of strings. If the slice is empty with no members, then the config option was not
-// specified in the yml file. If there was only a single value, it will be the only member in the slice.
+// with a slice of strings. If the slice is nil, then the config option was not specified
+// in the yml file. If there was only a single value, it will be the only member in the slice.
 type Config struct {
-	Language         string   `yaml:"language"`
-	Version          []string `yaml:"version"`
-	BeforeInstall    []string `yaml:"before_install"`
-	Install          []string `yaml:"install"`
-	BeforeScript     []string `yaml:"before_script"`
-	Script           []string `yaml:"script"`
-	Env              []string `yaml:"env"`
+	Language         string
+	Version          []string
+	BeforeInstall    []string
+	Install          []string
+	BeforeScript     []string
+	Script           []string
+	Env              []string
 	DockerfileConfig string
 }
 
@@ -44,9 +44,7 @@ func configFromContent(contents []byte) (*Config, error) {
 		return nil, fmt.Errorf("Could not parse yml file: %v", err)
 	}
 
-	c := &Config{}
-
-	// Parse all values from the map into the config struct
+	// Parse all values from the map for usage in the config struct
 	lang, err := dyno.GetString(conf, "language")
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse 'language' from the travis config")
@@ -82,15 +80,15 @@ func configFromContent(contents []byte) (*Config, error) {
 		return nil, fmt.Errorf("Could not parse 'env' from the travis config: %v", err)
 	}
 
-	c.Language = lang
-	c.Version = version
-	c.BeforeInstall = beforeInstall
-	c.Install = install
-	c.BeforeScript = beforeScript
-	c.Script = script
-	c.Env = env // TODO: Parse this into a map?
-
-	return c, err
+	return &Config{
+		Language:      lang,
+		Version:       version,
+		BeforeInstall: beforeInstall,
+		Install:       install,
+		BeforeScript:  beforeScript,
+		Script:        script,
+		Env:           env, // TODO: Parse this into a map?
+	}, nil
 }
 
 // getSlice dynamically looks up the "path" from the "from" interface and tries its best to marshal it into a slice of string.
