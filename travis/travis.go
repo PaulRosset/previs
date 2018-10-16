@@ -40,6 +40,9 @@ func ConfigFromFile(filepath string) (*Config, error) {
 func configFromContent(contents []byte) (*Config, error) {
 	conf := make(map[string]interface{})
 	err := yaml.Unmarshal(contents, &conf)
+	if err != nil {
+		return nil, fmt.Errorf("Could not parse yml file: %v", err)
+	}
 
 	c := &Config{}
 
@@ -106,7 +109,7 @@ func getSlice(from interface{}, path ...interface{}) ([]string, error) {
 	// Check if it is a slice value. If not, we are done and the path doesn't have a value.
 	v, err := dyno.GetSlice(from, path...)
 	if err != nil {
-		return []string{}, nil
+		return nil, nil
 	}
 
 	// For each item in the slice, check if it is a float or a string and handle it accordingly.
