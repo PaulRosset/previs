@@ -40,6 +40,7 @@ func (c *Config) writterFrom() {
 	var from string
 	images := map[string]string{
 		"node_js": "node",
+		"go":      "golang",
 	}
 	if c.version.IsValid() {
 		firstVersion := c.version.Index(0)
