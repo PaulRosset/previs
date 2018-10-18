@@ -1,0 +1,8 @@
+language: go
+go: 
+  - 1.9
+  - 1.8
+env: # next line is malformed
+DB=1234
+script:
+  - make test
