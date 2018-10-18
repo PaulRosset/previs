@@ -27,7 +27,7 @@ Previs is also providing a way to run things in a clean environment with no side
 
 ### Installation
 
-Previs is using docker at his heart, so of course you will need the docker deamon.  
+Previs is using docker at his heart, so of course you will need the docker daemon.  
 One of the simplest way to install it, it's by using the bash script:
 ```
 $> curl -fsSL get.docker.com -o get-docker.sh
@@ -36,9 +36,9 @@ $> sh get-docker.sh
 
 If you are on Mac, it's [here](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac)
 
-You will may have some troubleshooting when installing docker especially with the right management of it, if so, do the following:  
+You may have some trouble with permissions when attempting to run docker, if so, run the following command:
 `sudo usermod -a -G docker $USER`  
-If it still persist after, reboot your system.
+If the issue still persists, reboot your system.
 
 #### [Snap packager](https://snapcraft.io/) for Linux users
 
