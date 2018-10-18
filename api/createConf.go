@@ -4,18 +4,49 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+
+	"github.com/PaulRosset/previs/travis"
 )
 
-// Config regroup the travis config
-type Config struct {
-	platform         string
-	version          reflect.Value
-	beforeInstall    reflect.Value
-	install          reflect.Value
-	beforeScript     reflect.Value
-	script           reflect.Value
-	env              reflect.Value
-	dockerfileConfig string
+// API handles all the Docker related tasks as defined by the config.
+type API struct {
+	config *travis.Config
+}
+
+// FromConfig creates a new instance of the API from the provided config file.
+func FromConfig(configFile string) (*API, error) {
+	config, err := travis.ConfigFromFile(configFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &API{config}, nil
+}
+
+// WriteDockerfile writes the config from travis to a new Dockerfile.
+func (api *API) WriteDockerfile() (string, []string, error) {
+	fmt.Println("Creating Dockerfile")
+
+	file, imgDocker, err := createDockerFile()
+	if err != nil {
+		return "", nil, err
+	}
+
+	api.writerFrom()
+	api.writerAddConfig()
+	api.writerRunBeforeInstall()
+	api.writerRunInstall()
+	api.writerRunBeforeScript()
+	api.writerRunScript()
+	envs := api.getEnvsVariables()
+	file.WriteString(api.config.DockerfileConfig)
+
+	err = file.Close()
+	if err != nil {
+		return "", nil, err
+	}
+
+	return imgDocker, envs, nil
 }
 
 func createDockerFile() (*os.File, string, error) {
@@ -36,112 +67,83 @@ func reflectInterface(t interface{}) reflect.Value {
 	return s
 }
 
-func (c *Config) writterFrom() {
+func (api *API) writerFrom() {
 	var from string
 	images := map[string]string{
 		"node_js": "node",
 		"go":      "golang",
 	}
-	if c.version.IsValid() {
-		firstVersion := c.version.Index(0)
-		if platform, ok := images[c.platform]; ok {
-			from = fmt.Sprintf("FROM %+v:%+v\n", platform, firstVersion)
-		} else {
-			from = fmt.Sprintf("FROM %+v:%+v\n", c.platform, firstVersion)
-		}
-		c.dockerfileConfig = c.dockerfileConfig + from
-	} else {
+
+	if api.config.Version == nil {
 		fmt.Fprintf(os.Stderr, "The <from> and <version> directive is mandatory in your travis config")
 		os.Exit(2)
 	}
-}
 
-func (c *Config) writterAddConfig() {
-	c.dockerfileConfig = c.dockerfileConfig + "RUN apt-get update\nWORKDIR /home/app/\nCOPY ./ /home/app\n"
-}
+	version := api.config.Version[0]
 
-func (c *Config) writterRunBeforeInstall() {
-	if c.beforeInstall.IsValid() {
-		var runBeforeInstall string
-		for i := 0; i < c.beforeInstall.Len(); i++ {
-			runBeforeInstall = runBeforeInstall + fmt.Sprintf("RUN %+v\n", c.beforeInstall.Index(i))
-		}
-		c.dockerfileConfig = c.dockerfileConfig + runBeforeInstall
-	}
-}
-
-func (c *Config) writterRunInstall() {
-	if c.install.IsValid() {
-		var runInstall string
-		for i := 0; i < c.install.Len(); i++ {
-			runInstall = runInstall + fmt.Sprintf("RUN %+v\n", c.install.Index(i))
-		}
-		c.dockerfileConfig = c.dockerfileConfig + runInstall
-	}
-}
-
-func (c *Config) writterRunBeforeScript() {
-	if c.beforeScript.IsValid() {
-		var runBeforeScript string
-		for i := 0; i < c.beforeScript.Len(); i++ {
-			runBeforeScript = runBeforeScript + fmt.Sprintf("RUN %+v\n", c.beforeScript.Index(i))
-		}
-		c.dockerfileConfig = c.dockerfileConfig + runBeforeScript
-	}
-}
-
-func (c *Config) writterRunScript() {
-	if c.script.IsValid() {
-		entrypoint := c.script.Index(0)
-		cmd := fmt.Sprintf("CMD %+v\n", entrypoint)
-		c.dockerfileConfig = c.dockerfileConfig + cmd
+	if platform, ok := images[api.config.Language]; ok {
+		from = fmt.Sprintf("FROM %+v:%+v\n", platform, version)
 	} else {
+		from = fmt.Sprintf("FROM %+v:%+v\n", api.config.Language, version)
+	}
+
+	api.config.DockerfileConfig = api.config.DockerfileConfig + from
+}
+
+func (api *API) writerAddConfig() {
+	api.config.DockerfileConfig = api.config.DockerfileConfig + "RUN apt-get update\nWORKDIR /home/app/\nCOPY ./ /home/app\n"
+}
+
+func (api *API) writerRunBeforeInstall() {
+	if api.config.BeforeInstall != nil {
+		var runBeforeInstall string
+		for i := 0; i < len(api.config.BeforeInstall); i++ {
+			runBeforeInstall = runBeforeInstall + fmt.Sprintf("RUN %+v\n", api.config.BeforeInstall[i])
+		}
+
+		api.config.DockerfileConfig = api.config.DockerfileConfig + runBeforeInstall
+	}
+}
+
+func (api *API) writerRunInstall() {
+	if api.config.Install != nil {
+		var runInstall string
+		for i := 0; i < len(api.config.Install); i++ {
+			runInstall = runInstall + fmt.Sprintf("RUN %+v\n", api.config.Install[i])
+		}
+
+		api.config.DockerfileConfig = api.config.DockerfileConfig + runInstall
+	}
+}
+
+func (api *API) writerRunBeforeScript() {
+	if api.config.BeforeScript != nil {
+		var runBeforeScript string
+		for i := 0; i < len(api.config.BeforeScript); i++ {
+			runBeforeScript = runBeforeScript + fmt.Sprintf("RUN %+v\n", api.config.BeforeScript[i])
+		}
+
+		api.config.DockerfileConfig = api.config.DockerfileConfig + runBeforeScript
+	}
+}
+
+func (api *API) writerRunScript() {
+	if api.config.Script == nil {
 		fmt.Fprintln(os.Stderr, "The <script> directive is mandatory in your travis config")
 		os.Exit(2)
 	}
+
+	entrypoint := api.config.Script[0]
+	cmd := fmt.Sprintf("CMD %+v\n", entrypoint)
+	api.config.DockerfileConfig = api.config.DockerfileConfig + cmd
 }
 
-func (c *Config) getEnvsVariables() []string {
+func (api *API) getEnvsVariables() []string {
 	var envs []string
-	if c.env.IsValid() {
-		for i := 0; i < c.env.Len(); i++ {
-			envs = append(envs, fmt.Sprintf("%+v", c.env.Index(i)))
+	if api.config.Env != nil {
+		for i := 0; i < len(api.config.Env); i++ {
+			envs = append(envs, fmt.Sprintf("%+v", api.config.Env[i]))
 		}
 	}
 	return envs
-}
-
-// Writter is writting the config from travis to a new a dockerfile
-func Writter(configFile string) (string, []string, error) {
-	config, err := GetConfigFromTravis(configFile)
-	if err != nil {
-		return "", nil, err
-	}
-	exploitConfig := &Config{
-		platform:         config["language"].(string),
-		version:          reflectInterface(config[config["language"].(string)]),
-		beforeInstall:    reflectInterface(config["before_install"]),
-		install:          reflectInterface(config["install"]),
-		beforeScript:     reflectInterface(config["before_script"]),
-		script:           reflectInterface(config["script"]),
-		env:              reflectInterface(config["env"]),
-		dockerfileConfig: "",
-	}
-	file, imgDocker, err := createDockerFile()
-	if err != nil {
-		return "", nil, err
-	}
-	exploitConfig.writterFrom()
-	exploitConfig.writterAddConfig()
-	exploitConfig.writterRunBeforeInstall()
-	exploitConfig.writterRunInstall()
-	exploitConfig.writterRunBeforeScript()
-	exploitConfig.writterRunScript()
-	envs := exploitConfig.getEnvsVariables()
-	file.WriteString(exploitConfig.dockerfileConfig)
-	err = file.Close()
-	if err != nil {
-		return "", nil, err
-	}
-	return imgDocker, envs, nil
 }
