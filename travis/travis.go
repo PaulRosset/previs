@@ -25,8 +25,6 @@ type Config struct {
 
 // ConfigFromFile creates a config from a file path to '.travis.yml'
 func ConfigFromFile(filepath string) (*Config, error) {
-	// TODO: Verify yml extension
-
 	b, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return nil, fmt.Errorf("Could not read the file: %v", err)
@@ -87,7 +85,7 @@ func configFromContent(contents []byte) (*Config, error) {
 		Install:       install,
 		BeforeScript:  beforeScript,
 		Script:        script,
-		Env:           env, // TODO: Parse this into a map?
+		Env:           env,
 	}, nil
 }
 
