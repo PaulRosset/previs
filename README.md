@@ -12,6 +12,7 @@
 
 [![Travis CI Build Status](https://api.travis-ci.com/PaulRosset/previs.svg?branch=master)](https://travis-ci.org/PaulRosset/previs)
 [![Snap Status](https://build.snapcraft.io/badge/PaulRosset/previs.svg)](https://build.snapcraft.io/user/PaulRosset/previs)
+[![Previs latest version](https://img.shields.io/badge/dynamic/json.svg?label=Previs&url=https%3A%2F%2Fapi.github.com%2Frepos%2FPaulRosset%2Fprevis%2Freleases%2Flatest&query=%24.tag_name&colorB=blue)](https://github.com/PaulRosset/previs/releases)
 
 ### Motivation
 
@@ -74,18 +75,8 @@ Once you are at the root of your repository where the `.travis.yml` or `.previs.
 
 The `-p` command indicate to previs to take the configuration of the `.previs.yml` instead of the `.travis.yml`.
 
-Previs is for the moment supporting these commands:
-
-- Languages:
-    - Normally, all the language are already supported except the only languages name that differ between the travis config and the name of the image registered on the docker registry, in that case we have to add the entry in the dictionary. As an example the nodejs language demonstrate it. In the travis configuration we have to provide the name `node_js` but in the docker registry the official nodejs image is registered as `node`.
-
-- Commands:
-    - `language`
-    - `[nameoflanguage]: [version]`
-    - `before_install`
-    - `install`
-    - `before_script`
-    - `script`
+**!IMPORTANT**  
+Go find out how Previs work right now and know more what you can do before using it, by checking out our [Wiki](https://github.com/PaulRosset/previs/wiki/Previs-Docs)
 
 Previs understand a failed build when the program ran is returning other than the **0** exit code.
 
@@ -93,6 +84,8 @@ Previs understand a failed build when the program ran is returning other than th
 
 Concerning the workflow of testing, rather than create unit tests on multiple call systems that already been tested especially docker calls, we instead run the program in real world use case to verify nothing broke and prevent regressions.  
 To understand it, you can check out the `.travis.yml` file that serve th is purpose.
+
+On the other hand, for the configuration parsing of Travis mechanism, we have a package [travis](https://github.com/PaulRosset/previs/tree/master/travis) that is only doing this purpose and where some tests resides.
 
 ### Contribute
 
