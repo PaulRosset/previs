@@ -45,15 +45,6 @@ func configFromContent(contents []byte) (*Config, error) {
 	}
 
 	// Parse all values from the map for usage in the config struct
-	lang, err := dyno.GetString(conf, "language")
-	if err != nil {
-		return nil, fmt.Errorf("Could not parse 'language' from the travis config")
-	}
-
-	version, err := getSlice(conf, lang)
-	if err != nil {
-		return nil, fmt.Errorf("Could not parse '%s' from the travis config: %v", lang, err)
-	}
 
 	beforeInstall, err := getSlice(conf, "before_install")
 	if err != nil {
@@ -81,8 +72,6 @@ func configFromContent(contents []byte) (*Config, error) {
 	}
 
 	return &Config{
-		Language:      lang,
-		Version:       version,
 		BeforeInstall: beforeInstall,
 		Install:       install,
 		BeforeScript:  beforeScript,

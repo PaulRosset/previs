@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PaulRosset/previs/api"
+	//"github.com/PaulRosset/previs/api"
+	api "./api"
 )
 
 func whichConfig(args []string) string {
