@@ -49,9 +49,9 @@ You have to run two commands and you will be ready to use **Previs**:
 - `$> sudo apt install snapd`
 - `$> sudo snap install previs`
 
-As mentionned in [!8](https://github.com/PaulRosset/previs/pull/8), we let the possibility to still install the last version with the lighter image, so if you want the lighter image with less features:
+As mentionned in [!8](https://github.com/PaulRosset/previs/pull/8), we let the possibility to still install the previous (0.4.1) version with the lighter image, so if you want the lighter image with less features:
 - `$> sudo snap install --edge previs`  
-However if you want the latest release with the official travis image:  
+However if you want the latest release (0.5.0) with the official travis image:  
 - `$> sudo snap install --beta previs`
 
 For others package manager [see](https://docs.snapcraft.io/core/install).
