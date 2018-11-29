@@ -8,6 +8,8 @@ import (
 	"github.com/PaulRosset/previs/travis"
 )
 
+const pathGarnet = "/home/travis/.local/bin:/opt/pyenv/shims:/home/travis/.phpenv/shims:/home/travis/perl5/perlbrew/bin:/home/travis/.nvm/versions/node/v8.9.1/bin:/home/travis/.kiex/elixirs/elixir-1.4.5/bin:/home/travis/.kiex/bin:/home/travis/.rvm/gems/ruby-2.4.1/bin:/home/travis/.rvm/gems/ruby-2.4.1@global/bin:/home/travis/.rvm/rubies/ruby-2.4.1/bin:/home/travis/.phpenv/shims:/home/travis/gopath/bin:/home/travis/.gimme/versions/go1.7.4.linux.amd64/bin:/usr/local/phantomjs/bin:/usr/local/phantomjs:/usr/local/neo4j-3.2.7/bin:/usr/local/maven-3.5.2/bin:/usr/local/cmake-3.9.2/bin:/usr/local/clang-5.0.0/bin:/home/travis/.gimme/versions/go1.7.4.linux.amd64/bin:/usr/local/phantomjs/bin:/usr/local/phantomjs:/usr/local/neo4j-3.2.7/bin:/usr/local/maven-3.5.2/bin:/usr/local/cmake-3.9.2/bin:/usr/local/clang-5.0.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/travis/.rvm/bin:/home/travis/.phpenv/bin:/opt/pyenv/bin"
+
 // API handles all the Docker related tasks as defined by the config.
 type API struct {
 	config *travis.Config
@@ -68,30 +70,12 @@ func reflectInterface(t interface{}) reflect.Value {
 }
 
 func (api *API) writerFrom() {
-	var from string
-	images := map[string]string{
-		"node_js": "node",
-		"go":      "golang",
-	}
-
-	if api.config.Version == nil {
-		fmt.Fprintf(os.Stderr, "The <from> and <version> directive is mandatory in your travis config")
-		os.Exit(2)
-	}
-
-	version := api.config.Version[0]
-
-	if platform, ok := images[api.config.Language]; ok {
-		from = fmt.Sprintf("FROM %+v:%+v\n", platform, version)
-	} else {
-		from = fmt.Sprintf("FROM %+v:%+v\n", api.config.Language, version)
-	}
-
+	from := "FROM travisci/ci-garnet:packer-1515445631-7dfb2e1\n"
 	api.config.DockerfileConfig = api.config.DockerfileConfig + from
 }
 
 func (api *API) writerAddConfig() {
-	api.config.DockerfileConfig = api.config.DockerfileConfig + "RUN apt-get update\nWORKDIR /home/app/\nCOPY ./ /home/app\n"
+	api.config.DockerfileConfig = api.config.DockerfileConfig + "USER travis\nENV PATH " + pathGarnet + "\nWORKDIR /home/travis/builds/\nCOPY ./ /home/travis/builds/\n"
 }
 
 func (api *API) writerRunBeforeInstall() {
