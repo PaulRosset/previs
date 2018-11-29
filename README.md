@@ -49,6 +49,11 @@ You have to run two commands and you will be ready to use **Previs**:
 - `$> sudo apt install snapd`
 - `$> sudo snap install previs`
 
+As mentionned in [!8](https://github.com/PaulRosset/previs/pull/8), we let the possibility to still install the last version with the lighter image, so if you want the lighter image with less features:
+- `$> sudo snap install --edge previs`  
+However if you want the latest release with the official travis image:  
+- `$> sudo snap install --beta previs`
+
 For others package manager [see](https://docs.snapcraft.io/core/install).
 
 > Snap binary are located in `/snap/bin/`, make sure it is integrated in your $PATH env.
