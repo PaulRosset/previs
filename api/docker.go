@@ -62,14 +62,27 @@ func buildImage(ctx context.Context, cli *client.Client, imgDocker string, pathD
 	return nil
 }
 
-func startContainer(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string, envVar []string) (string, error) {
+func array_contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
+}
+
+func startContainer(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string, envVar []string, services []string) (string, error) {
+	hostconfig := &container.HostConfig{};
+	if array_contains(services, "docker") {
+		hostconfig = &container.HostConfig{
+			Binds: []string{"/var/run/docker.sock:/var/run/docker.sock"},
+		}
+	}
 	respContainerCreater, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: "previs",
 		Tty:   true,
 		Env:   envVar,
-	}, &container.HostConfig{
-		Binds: []string{"/var/run/docker.sock:/var/run/docker.sock"},
-	}, nil, "previs")
+	}, hostconfig, nil, "previs")
 	if err != nil {
 		return "", err
 	}
@@ -105,7 +118,7 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 }
 
 // Start the pipeline of test: Build,Launch,Clean
-func Start(imgDocker string, pathDockerImage string, envVar []string) error {
+func Start(imgDocker string, pathDockerImage string, envVar []string, services []string) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.WithVersion("1.38"))
 	if err != nil {
@@ -119,7 +132,7 @@ func Start(imgDocker string, pathDockerImage string, envVar []string) error {
 		}
 		return err
 	}
-	idContainer, err := startContainer(ctx, cli, imgDocker, pathDockerImage, envVar)
+	idContainer, err := startContainer(ctx, cli, imgDocker, pathDockerImage, envVar, services)
 	if err != nil {
 		errOnCleanCOntainer := CleanProducedContainer(ctx, cli, idContainer)
 		if errOnCleanCOntainer != nil {

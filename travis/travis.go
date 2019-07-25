@@ -15,6 +15,7 @@ import (
 type Config struct {
 	Language         string
 	Version          []string
+	Services         []string
 	BeforeInstall    []string
 	Install          []string
 	BeforeScript     []string
@@ -44,6 +45,11 @@ func configFromContent(contents []byte) (*Config, error) {
 
 	// Parse all values from the map for usage in the config struct
 
+	services, err := getSlice(conf, "services")
+	if err != nil {
+		return nil, fmt.Errorf("Could not parse 'services' from the travis config: %v", err)
+	}
+
 	beforeInstall, err := getSlice(conf, "before_install")
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse 'before_install' from the travis config: %v", err)
@@ -70,6 +76,7 @@ func configFromContent(contents []byte) (*Config, error) {
 	}
 
 	return &Config{
+		Services: services,
 		BeforeInstall: beforeInstall,
 		Install:       install,
 		BeforeScript:  beforeScript,

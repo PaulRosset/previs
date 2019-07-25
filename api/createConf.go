@@ -26,7 +26,7 @@ func FromConfig(configFile string) (*API, error) {
 }
 
 // WriteDockerfile writes the config from travis to a new Dockerfile.
-func (api *API) WriteDockerfile() (string, []string, error) {
+func (api *API) WriteDockerfile() (string, []string, []string, error) {
 	fmt.Println("Creating Dockerfile")
 
 	file, imgDocker, err := createDockerFile()
@@ -41,14 +41,15 @@ func (api *API) WriteDockerfile() (string, []string, error) {
 	api.writerRunBeforeScript()
 	api.writerRunScript()
 	envs := api.getEnvsVariables()
+	services := api.getServices()
 	file.WriteString(api.config.DockerfileConfig)
 
 	err = file.Close()
 	if err != nil {
-		return "", nil, err
+		return "", nil, nil, err
 	}
 
-	return imgDocker, envs, nil
+	return imgDocker, envs, services, nil
 }
 
 func createDockerFile() (*os.File, string, error) {
@@ -130,4 +131,14 @@ func (api *API) getEnvsVariables() []string {
 		}
 	}
 	return envs
+}
+
+func (api *API) getServices() []string {
+	var services []string
+	if api.config.Services != nil {
+		for i := 0; i < len(api.config.Services); i++ {
+			services = append(services, fmt.Sprintf("%+v", api.config.Services[i]))
+		}
+	}
+	return services
 }
