@@ -67,7 +67,9 @@ func startContainer(ctx context.Context, cli *client.Client, imgDocker string, p
 		Image: "previs",
 		Tty:   true,
 		Env:   envVar,
-	}, nil, nil, "previs")
+	}, &container.HostConfig{
+		Binds: []string{"/var/run/docker.sock:/var/run/docker.sock"},
+	}, nil, "previs")
 	if err != nil {
 		return "", err
 	}
