@@ -31,7 +31,7 @@ func (api *API) WriteDockerfile() (string, []string, []string, error) {
 
 	file, imgDocker, err := createDockerFile()
 	if err != nil {
-		return "", nil, err
+		return "", nil, nil, err
 	}
 
 	api.writerFrom()
