@@ -30,13 +30,13 @@ func main() {
 		die("An error occurred: %+v\n", err)
 	}
 
-	imgDocker, envsVar, err := runner.WriteDockerfile()
+	imgDocker, envsVar, services, err := runner.WriteDockerfile()
 	if err != nil {
 		api.CleanUnusedDockerfile(cwd, imgDocker)
 		die("An error occurred: %+v\n", err)
 	}
 
-	err = api.Start(imgDocker, cwd+"/", envsVar)
+	err = api.Start(imgDocker, cwd+"/", envsVar, services)
 	if err != nil {
 		api.CleanUnusedDockerfile(cwd, imgDocker)
 		die("An error occurred: %+v\n", err)
