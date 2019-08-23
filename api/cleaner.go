@@ -26,7 +26,7 @@ func CleanProducedImages(ctx context.Context, cli *client.Client) error {
 		return err
 	}
 	for _, image := range images {
-		if image.RepoTags[0] == "previs:latest" {
+		if len(image.RepoTags) >= 1 && image.RepoTags[0] == "previs:latest" {
 			_, err := cli.ImageRemove(ctx, image.ID, types.ImageRemoveOptions{
 				Force:         true,
 				PruneChildren: true,

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 
 	tm "github.com/buger/goterm"
@@ -71,20 +72,31 @@ func array_contains(arr []string, str string) bool {
 	return false
 }
 
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
 func startContainer(ctx context.Context, cli *client.Client, imgDocker string, pathDockerImage string, envVar []string, services []string) (string, error) {
-	hostconfig := &container.HostConfig{};
+	hostconfig := &container.HostConfig{}
 	if array_contains(services, "docker") {
 		hostconfig = &container.HostConfig{
 			Binds: []string{"/var/run/docker.sock:/var/run/docker.sock"},
 		}
 	}
+	containerName := randSeq(10) + "-previs"
 	respContainerCreater, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: "previs",
 		Tty:   true,
 		Env:   envVar,
-	}, hostconfig, nil, "previs")
+	}, hostconfig, nil, containerName)
 	if err != nil {
-		return "", err
+		return fmt.Sprintf("ContainerCreate failed with name '%s'", containerName), err
 	}
 	err = cli.ContainerStart(ctx, respContainerCreater.ID, types.ContainerStartOptions{})
 	if err != nil {
